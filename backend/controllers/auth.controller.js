@@ -1,5 +1,6 @@
 import generateTokenAndSetCookie from "../../utils/generateTokenAndSetCookie.js"
 import generateVerificationToken from "../../utils/generateVerificationToken.js"
+import { sendVerificationEmail } from "../mailtrap/email.js"
 import {User} from "../models/user.model.js"
 import bcryptjs from 'bcryptjs'
 import mongoose from "mongoose"
@@ -8,7 +9,7 @@ export const register = async(req, res)=>{
     const session = await mongoose.startSession(); 
 
     try {    
-        session.startTransaction();
+        await session.startTransaction();
 
         const {email, password, name} = req.body
 
@@ -30,17 +31,24 @@ export const register = async(req, res)=>{
         const hashedPassword = await bcryptjs.hash(password, salt)
         
         const verificationToken = generateVerificationToken()
-
+        const verificationTokenExpiresAt = Date.now()+24*60*60*1000 
         const newUser = await User.create({
             email,
             password : hashedPassword,
             name,
             verificationToken,
-            verificationTokenExpiresAt: Date.now()+24*60*60*1000 
+            verificationTokenExpiresAt
         })
         generateTokenAndSetCookie({
             userID : newUser?._id,
             res
+        })
+
+
+        await sendVerificationEmail({
+            email: newUser.email,
+            verificationToken,
+            verificationTokenExpiresAt
         })
 
         await session.commitTransaction(); 
