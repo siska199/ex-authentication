@@ -76,3 +76,43 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   res.send("Logout routes");
 };
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const user = await User.findOne({
+      verificationToken: code,
+      verificationTokenExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user)
+      return res.status(400).send({
+        status: false,
+        message: "Invalid or Expired verification code",
+      });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
+    user.save();
+
+    await sendWelcomeEmail({
+      email: user.email,
+      name: user.name,
+    });
+
+    return res.status(200).send({
+      status: true,
+      message: "Verify email successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+};

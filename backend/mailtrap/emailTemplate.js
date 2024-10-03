@@ -1,4 +1,4 @@
-export const VERIFICATION_EMAIL_TEMPLATE = (params)=>`
+export const VERIFICATION_EMAIL_TEMPLATE = (params) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,10 +14,14 @@ export const VERIFICATION_EMAIL_TEMPLATE = (params)=>`
     <p>Hello,</p>
     <p>Thank you for signing up! Your verification code is:</p>
     <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">${params?.verificationToken}</span>
+      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">${
+        params?.verificationToken
+      }</span>
     </div>
     <p>Enter this code on the verification page to complete your registration.</p>
-    <p>This code will expire at ${new Date(params.verificationTokenExpiresAt)} for security reasons.</p>
+    <p>This code will expire at ${new Date(
+      params.verificationTokenExpiresAt
+    )} for security reasons.</p>
     <p>If you didn't create an account with us, please ignore this email.</p>
     <p>Best regards,<br>Your App Team</p>
   </div>
@@ -28,7 +32,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = (params)=>`
 </html>
 `;
 
-export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
+export const PASSWORD_RESET_SUCCESS_TEMPLATE = (params) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,7 +69,7 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
 </html>
 `;
 
-export const PASSWORD_RESET_REQUEST_TEMPLATE = `
+export const PASSWORD_RESET_REQUEST_TEMPLATE = (params) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
